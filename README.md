@@ -1,3 +1,3 @@
 # goit-node-hw-01
 
-![ScreenShot](./screenshots/Scr.png)
+<img src='./screenshots/Scr1.png'>
