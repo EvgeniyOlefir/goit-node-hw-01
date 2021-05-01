@@ -1,11 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 
-const contactPath = path.join(__dirname, './db/contacts.json')
+const contactsPath = path.join(__dirname, './db/contacts.json')
 
-// TODO: задокументировать каждую функцию
 function listContacts() {
-  fs.readFile(contactPath, (err, data) => {
+  fs.readFile(contactsPath, (err, data) => {
     if (err) {
       console.error(err)
     }
@@ -13,17 +12,17 @@ function listContacts() {
     if (!rawData) {
       process.exit(1)
     }
-    const contactList = JSON.parse(rawData)
-    if (contactList.length === 0) {
-      console.log('Contact list is empty')
+    const contactsList = JSON.parse(rawData)
+    if (contactsList.length === 0) {
+      console.log('Contacts list is empty!')
       return
     }
-    console.table(contactList)
+    console.table(contactsList)
   })
 }
 
 function getContactById(contactId) {
-  fs.readFile(contactPath, (err, data) => {
+  fs.readFile(contactsPath, (err, data) => {
     if (err) {
       console.error(err)
     }
@@ -31,8 +30,8 @@ function getContactById(contactId) {
     if (!rawData) {
       process.exit(1)
     }
-    const contactList = JSON.parse(rawData)
-    const foundContact = contactList.find(({ id }) => id === contactId)
+    const contactsList = JSON.parse(rawData)
+    const foundContact = contactsList.find(({ id }) => id === contactId)
     if (foundContact) {
       console.table([foundContact])
     } else {
@@ -42,11 +41,59 @@ function getContactById(contactId) {
 }
 
 function removeContact(contactId) {
-  // ...твой код
+  fs.readFile(contactsPath, (err, data) => {
+    if (err) {
+      console.error(err.message)
+    }
+    const rawData = data.toString()
+    if (!rawData) {
+      process.exit(1)
+    }
+    const contactsList = JSON.parse(rawData)
+    const filteredContacts = contactsList.filter(({ id }) => id !== contactId)
+    if (contactsList.length !== filteredContacts.length) {
+      fs.writeFile(contactsPath, JSON.stringify(filteredContacts), err => {
+        if (err) {
+          console.error(err.message)
+          process.exit(1)
+        }
+      })
+    }
+    console.log('Contact was deleted successfully!')
+    console.table(contactsList)
+  })
 }
 
 function addContact(name, email, phone) {
-  // ...твой код
+  fs.readFile(contactsPath, (err, data) => {
+    if (err) {
+      console.error(err)
+    }
+    const rawData = data.toString()
+    let contactsList
+    let id
+    if (!rawData) {
+      contactsList = []
+      id = 1
+    } else {
+      contactsList = JSON.parse(rawData)
+      id =
+        contactsList.length === 0
+          ? 1
+          : contactsList[contactsList.length - 1].id + 1
+    }
+
+    if (name && email && phone) {
+      contactsList.push({ id, name, email, phone })
+      fs.writeFile(contactsPath, JSON.stringify(contactsList), err => {
+        if (err) {
+          console.error(err)
+        }
+        console.log('Contact was added. Saved successfully!')
+        console.table(contactsList)
+      })
+    }
+  })
 }
 
 module.exports = { listContacts, removeContact, addContact, getContactById }
