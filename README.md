@@ -1,3 +1,3 @@
 # goit-node-hw-01
 
-<img src='./screenshots/Scr1.jpg'>
+<img src='./screenshots/Scr1.png'>
