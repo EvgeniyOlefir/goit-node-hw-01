@@ -23,7 +23,22 @@ function listContacts() {
 }
 
 function getContactById(contactId) {
-  // ...твой код
+  fs.readFile(contactPath, (err, data) => {
+    if (err) {
+      console.error(err)
+    }
+    const rawData = data.toString()
+    if (!rawData) {
+      process.exit(1)
+    }
+    const contactList = JSON.parse(rawData)
+    const foundContact = contactList.find(({ id }) => id === contactId)
+    if (foundContact) {
+      console.table([foundContact])
+    } else {
+      process.exit(1)
+    }
+  })
 }
 
 function removeContact(contactId) {
